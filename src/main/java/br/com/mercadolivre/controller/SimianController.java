@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +17,7 @@ import javax.validation.Valid;
 import java.util.concurrent.ExecutionException;
 
 @RestController("simian")
-@Api(value = "simian")
+@Api
 @Validated
 public class SimianController {
 
@@ -24,7 +25,7 @@ public class SimianController {
     private SimianService simianService;
 
     @ApiOperation(value = "POST simian payload to verification")
-    @PostMapping
+    @PostMapping(value = "/simian")
     public ResponseEntity<Object> simian(@Valid @RequestBody SimianContract simianContract)
             throws ExecutionException, InterruptedException {
 
@@ -32,5 +33,12 @@ public class SimianController {
                 ResponseEntity.ok().build() :
                 ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
+
+    @ApiOperation(value = "GET stats population simians ratio")
+    @GetMapping(value = "/stats")
+    public ResponseEntity<Object> stats(){
+        return ResponseEntity.ok(simianService.getStats());
+    }
+
 
 }

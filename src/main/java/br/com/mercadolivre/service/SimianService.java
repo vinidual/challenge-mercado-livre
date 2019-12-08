@@ -1,11 +1,15 @@
 package br.com.mercadolivre.service;
 
-import br.com.mercadolivre.repository.SimianRepository;
+import br.com.mercadolivre.contract.StatsContract;
+import br.com.mercadolivre.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -13,15 +17,18 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 public class SimianService {
 
+    @Autowired
+    private SimianRepository simianRepository;
+
+    @Autowired
+    private StatsRepository statsRepository;
+
     private final int numLetters;
 
     @Autowired
     public SimianService(@Value("${number.letters}") Integer numLetters){
         this.numLetters = numLetters;
     }
-
-    @Autowired
-    private SimianRepository simianRepository;
 
     public Boolean isSimian(String[] dna) throws ExecutionException, InterruptedException {
 
@@ -100,6 +107,14 @@ public class SimianService {
                 finished = true;
             }
         }
+
+        boolean finalIsSimian = isSimian;
+
+        CompletableFuture.runAsync(() -> this.saveDna(SimianEntity.builder()
+            .dnaString(Arrays.toString(dna))
+            .dnaType(finalIsSimian ? DnaType.SIMIAN.name() : DnaType.HUMAN.name())
+            .build()
+        ));
 
         return isSimian;
     }
@@ -216,4 +231,59 @@ public class SimianService {
         return result;
     }
 
+    private void saveDna(SimianEntity newDna) {
+
+        Optional<SimianEntity> simianEntity = simianRepository.findFirstByDnaString(newDna.getDnaString());
+
+        if(!simianEntity.isPresent()){
+            log.info("new dna recorded:{}", newDna.getDnaString());
+            simianRepository.save(newDna);
+            this.calculateRatio(newDna.getDnaType());
+        }
+        else {
+            log.warn("dna already recorded, avoiding duplicated unique exception: {}", newDna.getDnaString());
+        }
+    }
+
+    private void calculateRatio(String dnaType){
+
+        Optional<StatsEntity> optionalStatsEntity = statsRepository.findById(1);
+
+        if(optionalStatsEntity.isPresent()){
+
+            StatsEntity statsEntity = optionalStatsEntity.get();
+
+            if(DnaType.HUMAN.name().equals(dnaType)){
+                log.info("incrementing count human");
+                statsEntity.setCountHumanDna(statsEntity.getCountHumanDna() + 1);
+            }
+            else if(DnaType.SIMIAN.name().equals(dnaType)){
+                log.info("incrementing count mutant");
+                statsEntity.setCountMutantDna(statsEntity.getCountMutantDna() + 1);
+            }
+
+            log.info("recalculating ratio");
+            statsEntity.setRatio(statsEntity.getCountHumanDna() != 0L ?
+                    BigDecimal.valueOf(statsEntity.getCountMutantDna() / statsEntity.getCountHumanDna()) :
+                    BigDecimal.ZERO);
+
+            statsRepository.save(statsEntity);
+        }
+    }
+
+    public StatsContract getStats(){
+
+        Optional<StatsEntity> statsEntity = statsRepository.findById(1);
+
+        if(statsEntity.isPresent()){
+
+            return StatsContract.builder()
+                    .countHumanDna(statsEntity.get().getCountHumanDna())
+                    .countMutantDna(statsEntity.get().getCountMutantDna())
+                    .ratio(statsEntity.get().getRatio())
+                    .build();
+        }
+
+        return StatsContract.builder().build();
+    }
 }

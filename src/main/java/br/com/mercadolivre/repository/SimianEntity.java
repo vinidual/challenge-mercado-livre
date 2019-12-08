@@ -27,7 +27,7 @@ public class SimianEntity {
     private String dnaString;
 
     @Column(nullable = false)
-    private DnaType dnaType;
+    private String dnaType;
 
     @CreationTimestamp
     private Timestamp creationDate;

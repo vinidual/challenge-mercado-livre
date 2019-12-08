@@ -2,6 +2,10 @@ package br.com.mercadolivre.service;
 
 import br.com.mercadolivre.contract.StatsContract;
 import br.com.mercadolivre.repository.*;
+import br.com.mercadolivre.verifier.DiagonalVerifier;
+import br.com.mercadolivre.verifier.HorizontalVerifier;
+import br.com.mercadolivre.verifier.InverseDiagonalVerifier;
+import br.com.mercadolivre.verifier.VerticalVerifier;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +26,18 @@ public class SimianService {
 
     @Autowired
     private StatsRepository statsRepository;
+
+    @Autowired
+    private HorizontalVerifier horizontalVerifier;
+
+    @Autowired
+    private VerticalVerifier verticalVerifier;
+
+    @Autowired
+    private DiagonalVerifier diagonalVerifier;
+
+    @Autowired
+    private InverseDiagonalVerifier inverseDiagonalVerifier;
 
     private final int numLetters;
 
@@ -47,16 +63,20 @@ public class SimianService {
             int finalVerticalIdx = verticalIdx;
 
             CompletableFuture<String> horizontalString = CompletableFuture
-                    .supplyAsync(() -> verifyHorizontalString(finalHorizontalIdx, finalVerticalIdx, dna));
+                    .supplyAsync(() -> horizontalVerifier
+                            .verifyHorizontalString(finalHorizontalIdx, finalVerticalIdx, dna, numLetters));
 
             CompletableFuture<String> verticalString = CompletableFuture
-                    .supplyAsync(() -> verifyVerticalString(finalHorizontalIdx, finalVerticalIdx, dna));
+                    .supplyAsync(() -> verticalVerifier
+                            .verifyVerticalString(finalHorizontalIdx, finalVerticalIdx, dna, numLetters));
 
             CompletableFuture<String> diagonalString = CompletableFuture
-                    .supplyAsync(() -> verifyDiagonalString(finalHorizontalIdx, finalVerticalIdx, dna));
+                    .supplyAsync(() -> diagonalVerifier
+                            .verifyDiagonalString(finalHorizontalIdx, finalVerticalIdx, dna, numLetters));
 
             CompletableFuture<String> inverseDiagonalString = CompletableFuture
-                    .supplyAsync(() -> verifyInverseDiagonalString(finalHorizontalIdx, finalVerticalIdx, dna));
+                    .supplyAsync(() -> inverseDiagonalVerifier
+                            .verifyInverseDiagonalString(finalHorizontalIdx, finalVerticalIdx, dna, numLetters));
 
             CompletableFuture<Void> completableFuture = CompletableFuture
                     .allOf(horizontalString, verticalString, diagonalString, inverseDiagonalString);
@@ -117,118 +137,6 @@ public class SimianService {
         ));
 
         return isSimian;
-    }
-
-    private String verifyHorizontalString(int h, int v, String[] sArray){
-
-        String result = "not apply";
-
-        if(sArray.length - h >= numLetters) {
-
-            char comparable = ' ';
-
-            result = "true";
-
-            for(int index = h; index < h + numLetters; index++){
-
-                if(comparable == ' '){
-                    comparable = sArray[v].charAt(index);
-                }
-                else if(sArray[v].charAt(index) != comparable){
-                    result = "false";
-                    break;
-                }
-            }
-        }
-
-        return result;
-    }
-
-    private String verifyVerticalString(int h, int v, String[] sArray){
-
-        String result = "not apply";
-
-        if(sArray.length - v >= numLetters && h < sArray.length){
-
-            char comparable = ' ';
-
-            result = "true";
-
-            for(int index = v; index < v + numLetters; index++){
-
-                if(comparable == ' '){
-                    comparable = sArray[v].charAt(index);
-                }
-                else if(sArray[v].charAt(index) != comparable){
-                    result = "false";
-                    break;
-                }
-            }
-        }
-
-        return result;
-    }
-
-    private String verifyDiagonalString(int h, int v, String[] sArray){
-
-        String result = "not apply";
-
-        if(sArray.length - h >= numLetters && sArray.length - v >= numLetters){
-
-            char comparable = ' ';
-
-            result = "true";
-
-            int letter = numLetters;
-
-            while (letter > 0){
-
-                if(comparable == ' '){
-                    comparable = sArray[v].charAt(h);
-                }
-                else if(sArray[v].charAt(h) != comparable){
-                    result = "false";
-                    break;
-                }
-
-                letter--;
-                h++;
-                v++;
-            }
-        }
-
-        return result;
-    }
-
-    private String verifyInverseDiagonalString(int h, int v, String[] sArray){
-
-        String result = "not apply";
-
-        if(sArray.length - h < numLetters && sArray.length - v >= numLetters && h < sArray.length){
-
-            char comparable = ' ';
-
-            result = "true";
-
-            int letter = numLetters;
-
-            while (letter > 0){
-
-                if(comparable == ' '){
-                    comparable = sArray[v].charAt(h);
-                }
-                else if(sArray[v].charAt(h) != comparable){
-                    result = "false";
-                    break;
-                }
-
-                letter--;
-                h--;
-                v++;
-            }
-        }
-
-        return result;
     }
 
     private void saveDna(SimianEntity newDna) {

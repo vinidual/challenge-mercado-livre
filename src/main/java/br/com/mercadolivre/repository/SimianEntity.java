@@ -4,12 +4,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.Id;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -31,7 +27,7 @@ public class SimianEntity {
     private String dnaString;
 
     @Column(nullable = false)
-    private DnaType dnaType;
+    private String dnaType;
 
     @CreationTimestamp
     private Timestamp creationDate;

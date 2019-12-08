@@ -21,6 +21,9 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 public class SimianService {
 
+    @Value("${number.letters}")
+    private int numLetters;
+
     @Autowired
     private SimianRepository simianRepository;
 
@@ -38,13 +41,6 @@ public class SimianService {
 
     @Autowired
     private InverseDiagonalVerifier inverseDiagonalVerifier;
-
-    private final int numLetters;
-
-    @Autowired
-    public SimianService(@Value("${number.letters}") Integer numLetters){
-        this.numLetters = numLetters;
-    }
 
     public Boolean isSimian(String[] dna) throws ExecutionException, InterruptedException {
 
@@ -119,10 +115,6 @@ public class SimianService {
                 horizontalIdx++;
                 verticalIdx = 0;
             }
-            else if(horizontalIdx < dnaLength){
-                horizontalIdx++;
-                verticalIdx = 0;
-            }
             else {
                 finished = true;
             }
@@ -153,7 +145,7 @@ public class SimianService {
         }
     }
 
-    private void calculateRatio(String dnaType){
+    protected void calculateRatio(String dnaType){
 
         Optional<StatsEntity> optionalStatsEntity = statsRepository.findById(1);
 

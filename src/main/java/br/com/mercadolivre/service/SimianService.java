@@ -131,7 +131,7 @@ public class SimianService {
         return isSimian;
     }
 
-    private void saveDna(SimianEntity newDna) {
+    protected void saveDna(SimianEntity newDna) {
 
         Optional<SimianEntity> simianEntity = simianRepository.findFirstByDnaString(newDna.getDnaString());
 

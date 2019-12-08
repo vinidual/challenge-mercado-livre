@@ -107,7 +107,6 @@ public class SimianServiceTest {
         when(verticalVerifier.verifyVerticalString(any(), any(), any(), any())).thenReturn("not apply");
         when(diagonalVerifier.verifyDiagonalString(any(), any(), any(), any())).thenReturn("not apply");
         when(inverseDiagonalVerifier.verifyInverseDiagonalString(any(), any(), any(), any())).thenReturn("not apply");
-        when(simianRepository.findFirstByDnaString(any())).thenReturn(Optional.of(SimianEntity.builder().build()));
 
         assertFalse(simianService.isSimian(dna));
     }
@@ -164,6 +163,34 @@ public class SimianServiceTest {
         assertNull(statsContract.getCountHumanDna());
         assertNull(statsContract.getCountMutantDna());
         assertNull(statsContract.getRatio());
+    }
+
+    @Test
+    public void shouldSaveDna(){
+
+        when(simianRepository.findFirstByDnaString(any()))
+                .thenReturn(Optional.empty());
+
+        simianService.saveDna(SimianEntity.builder()
+                .dnaString("")
+                .dnaType(DnaType.HUMAN.name())
+                .build());
+
+        verify(simianRepository).save(any());
+    }
+
+    @Test
+    public void shouldNotSaveDna(){
+
+        when(simianRepository.findFirstByDnaString(any()))
+                .thenReturn(Optional.of(SimianEntity.builder().build()));
+
+        simianService.saveDna(SimianEntity.builder()
+                .dnaString("")
+                .dnaType(DnaType.HUMAN.name())
+                .build());
+
+        verify(simianRepository).findFirstByDnaString(any());
     }
 
 }

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class InverseDiagonalVerifier {
 
-    public String verifyInverseDiagonalString(int h, int v, String[] sArray, int numLetters){
+    public String verifyInverseDiagonalString(Integer h, Integer v, String[] sArray, Integer numLetters){
 
         String result = "not apply";
 

@@ -3,8 +3,7 @@ package br.com.mercadolivre.contract;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotEmpty;
@@ -12,6 +11,9 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @ApiModel
 public class SimianContract {
 

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class HorizontalVerifier {
 
-    public String verifyHorizontalString(int h, int v, String[] sArray, int numLetters){
+    public String verifyHorizontalString(Integer h, Integer v, String[] sArray, Integer numLetters){
 
         String result = "not apply";
 

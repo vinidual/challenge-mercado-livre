@@ -25,6 +25,26 @@ public class InverseDiagonalTest {
     }
 
     @Test
+    public void shouldReturnTrueLongDna(){
+
+        String[] dna = new String[]{
+                "GTTCGGTGAG",
+                "AAGTACGCCA",
+                "TGTCAGTTAG",
+                "ATAAACAATG",
+                "AGATGCCGAA",
+                "ATCCTCGAGC",
+                "CAGGGTAGAT",
+                "TGTGCTCTGC",
+                "CGGCCACCAA",
+                "GGTGAGGAAT"
+        };
+
+        assertEquals("true", inverseDiagonalVerifier
+                .verifyInverseDiagonalString(4, 6, dna, 4));
+    }
+
+    @Test
     public void shouldReturnFalse(){
         String[] dna = new String[]{
                 "ABCD", "EFGH", "IJKL", "MNOP"

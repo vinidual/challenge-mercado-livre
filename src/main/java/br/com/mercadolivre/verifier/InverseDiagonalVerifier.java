@@ -9,7 +9,7 @@ public class InverseDiagonalVerifier {
 
         String result = "not apply";
 
-        if(sArray.length - h < numLetters && sArray.length - v >= numLetters && h < sArray.length){
+        if(sArray.length - v >= numLetters && (h + 1) >= numLetters && h < sArray.length){
 
             char comparable = ' ';
 

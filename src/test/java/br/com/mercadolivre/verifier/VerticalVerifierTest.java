@@ -14,13 +14,29 @@ public class VerticalVerifierTest {
     private VerticalVerifier verticalVerifier;
 
     @Test
-    public void shouldReturnTrue(){
+    public void shouldReturnTrueLongDNA(){
 
         String[] dna = new String[]{
-                "AAAA", "AAAA", "AAAA", "AAAA"
+                "GTTCGGTGAG",
+                "AAGTACGCCA",
+                "TGTCAGTTAG",
+                "ATAAACAATG",
+                "AGATGCCGAA",
+                "ATCCTCGAGC",
+                "CAGGGAAGAA",
+                "TGTGCTTAGA",
+                "CGCCCACCGA",
+                "GGTGAGGAAA"
         };
 
-        assertEquals("true", verticalVerifier.verifyVerticalString(0, 0, dna, 4));
+        assertEquals("true", verticalVerifier.verifyVerticalString(9, 6, dna, 4));
+    }
+
+    @Test
+    public void shouldReturnTrue(){
+
+
+
     }
 
     @Test

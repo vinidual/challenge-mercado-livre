@@ -111,7 +111,7 @@ public class SimianService {
             if(verticalIdx < dnaLength - 1){
                 verticalIdx++;
             }
-            else if((dnaLength - horizontalIdx) >= numLetters){
+            else if(horizontalIdx < dnaLength - 1){
                 horizontalIdx++;
                 verticalIdx = 0;
             }
@@ -164,7 +164,7 @@ public class SimianService {
 
             log.info("recalculating ratio");
             statsEntity.setRatio(statsEntity.getCountHumanDna() != 0L ?
-                    BigDecimal.valueOf(statsEntity.getCountMutantDna() / statsEntity.getCountHumanDna()) :
+                    BigDecimal.valueOf((double) statsEntity.getCountMutantDna() / statsEntity.getCountHumanDna()) :
                     BigDecimal.ZERO);
 
             statsRepository.save(statsEntity);

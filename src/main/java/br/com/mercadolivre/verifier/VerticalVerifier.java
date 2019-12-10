@@ -18,9 +18,9 @@ public class VerticalVerifier {
             for(int index = v; index < v + numLetters; index++){
 
                 if(comparable == ' '){
-                    comparable = sArray[v].charAt(index);
+                    comparable = sArray[index].charAt(h);
                 }
-                else if(sArray[v].charAt(index) != comparable){
+                else if(sArray[index].charAt(h) != comparable){
                     result = "false";
                     break;
                 }
